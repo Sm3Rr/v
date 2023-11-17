@@ -1,33 +1,26 @@
 import paramiko
-import sys
 
-def execute_command(ip, username, password, command):
-    try:
-        # Connect to the server
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ip, username=username, password=password)
+def change_vps_password(vps_ip, username, password, new_password):
+    # برقراری ارتباط با VPS
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(vps_ip, username=username, password=password)
 
-        # Execute the command
-        stdin, stdout, stderr = ssh.exec_command(command)
+    # اجرای دستور net user برای تغییر رمز عبور
+    command = f"net user Administrator {new_password}"
+    stdin, stdout, stderr = client.exec_command(command)
 
-        # Print the output of the command
-        print(stdout.read().decode('utf-8'))
+    # چاپ خروجی دستور
+    print(stdout.read().decode())
 
-        # Close the connection
-        ssh.close()
+    # بستن اتصال
+    client.close()
 
-    except Exception as e:
-        print("Error: ", e)
+# ورودی‌ها
+vps_ip = input("IP VPS را وارد کنید: ")
+username = input("نام کاربری را وارد کنید: ")
+password = input("رمز عبور را وارد کنید: ")
+new_password = input("رمز عبور جدید را وارد کنید: ")
 
-if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Usage: python script.py <ip> <username> <password>")
-        sys.exit(1)
-
-    ip = sys.argv[1]
-    username = sys.argv[2]
-    password = sys.argv[3]
-    command = "net user Administrator Smer@Smer11"
-
-    execute_command(ip, username, password, command)
+# تغییر رمز عبور سرور مجازی
+change_vps_password(vps_ip, username, password, new_password)
