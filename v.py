@@ -1,21 +1,26 @@
 import requests
-from termcolor import colored  # for colored printing
+import json
 
-def check_http(url):
+def change_password(old_password, new_password, username, server_ip):
+    url = f"http://{server_ip}/api/users/password"
+    headers = {
+        "Content-Type": "application/json",
+    }
+    data = {
+        "oldPassword": old_password,
+        "newPassword": new_password,
+        "username": username,
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data), auth=('admin', 'password'))
+    
     try:
-        response = requests.get(url)
-        print(f"HTTP Status Code for {url}: {response.status_code}")
-        if response.status_code == 200:
-            print(colored(f"The website {url} is up and running!", 'green'))
-        elif response.status_code == 404:
-            print(colored(f"Oops! {url} was not found (404 Not Found).", 'red'))
-        else:
-            print(colored(f"Looks like {url} is having some issues. Status code: {response.status_code}", 'yellow'))
-    except requests.RequestException as e:
-        print(colored(f"An error occurred: {e}", 'red'))
-
-# Input
-url_to_check = input("Please enter the URL you want to check: ")
-
-# Perform HTTP check
-check_http(url_to_check)
+        response.raise_for_status()
+        return "رمز عوض شد"
+    except requests.exceptions.HTTPError as errh:
+        return "Http Error:", errh
+    except requests.exceptions.ConnectionError as errc:
+        return "Error Connecting:", errc
+    except requests.exceptions.Timeout as errt:
+        return "Timeout Error:", errt
+    except requests.exceptions.RequestException as err:
+        return "OOps: Something Else", err
