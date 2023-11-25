@@ -24,3 +24,11 @@ def change_password(old_password, new_password, username, server_ip):
         return "Timeout Error:", errt
     except requests.exceptions.RequestException as err:
         return "OOps: Something Else", err
+
+if __name__ == "__main__":
+    old_password = input("old pass : ")
+    new_password = input("new pass : ")
+    username = input("user : ")
+    server_ip =input("ip address : ")
+    result = change_password(old_password, new_password, username, server_ip)
+    print(result)
