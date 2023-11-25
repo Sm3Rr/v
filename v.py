@@ -15,7 +15,7 @@ def change_password(old_password, new_password, username, server_ip):
     
     try:
         response.raise_for_status()
-        return "رمز عوض شد"
+        return " PASSWORD CHANGED ! "
     except requests.exceptions.HTTPError as errh:
         return "Http Error:", errh
     except requests.exceptions.ConnectionError as errc:
